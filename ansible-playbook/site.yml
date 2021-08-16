@@ -9,3 +9,19 @@
   roles:
     - nginx
     - spring-boot-app
+    
+ - name: Check apps is up
+  hosts: apps
+  become: yes
+  become_method: sudo
+  tasks:
+    - uri:
+        url: "http://{{ apps_ip4_address }}:8080"
+        method: GET
+      register: check
+      until: "'OK' in check.msg"
+      retries: 10
+      delay: 30
+      ignore_errors: true
+      when: apps_is_primary == true
+
