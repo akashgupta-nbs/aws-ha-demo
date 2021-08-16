@@ -33,6 +33,19 @@ Once the infra setup is done, ansible playbooks gets the host info list dynamica
 Install the nginx on servers through playbook and update the nginx configuration to set the proxy pass to localhost
 proxy_pass http://localhost:8080/![image](https://user-images.githubusercontent.com/81324154/129527602-72109bff-0c8b-49ae-b0b5-10486c6eaf28.png)
 
+# docker setup
+Pull the spring boot image and run on this 8080 port on both the server
+Use the restart flag to help restart the container in case of any issues. 
+docker run -d -p 8080:8080 springio/gs-spring-boot-docker --restart
+
+# ansible-playbook
+Playbook task to help installing nginx on nodes and running  docker apps on server.
+It also verify the localhost 8080 port for basic sanity of apps.
+for production , prod hosts needs to be use. 
+Default env would be dev env. 
+
+ansible-playbook -i hosts site.yml
+
 ## Before nginx setup:
 Gets the traffic from load balancer and distributes to both the nodes:
 
