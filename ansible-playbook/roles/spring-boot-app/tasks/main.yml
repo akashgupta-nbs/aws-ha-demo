@@ -1,0 +1,45 @@
+---
+# tasks file for app-start
+- include_tasks: ../../../prereq/set_facts_for_env/tasks/main.yml
+
+- debug:
+    var: database_connector
+
+- name: stop all docker containers
+  shell:  docker stop artifactory >/dev/null 2>&1 || true
+  tags: appstart
+
+- name: "Creating spring boot docker directory"
+  file:
+    path: /opt/apps_docker/scripts
+    state: directory
+    mode: 0700
+    group: root
+    owner: root
+  tags: 
+    - appstart
+    - startart
+
+- debug:
+    var: docker_registry_host
+  tags: host
+
+- name: Copy Docker start/stop utility scripts
+  copy:
+    src: "files/{{item}}"
+    dest: /opt/apps_docker/scripts
+    mode: 700
+    group: root
+    owner: root
+  with_items:
+    - start_apps.sh
+    - stop_apps.sh
+  tags: 
+    - startart
+    - appstart
+
+- name: Start spring boot apps
+  shell: ./start_artifactoryv7.sh {{ apps_version }} {{ docker_registry_host }}  chdir="/opt/apps_docker/scripts"
+  tags:
+    - appstart
+    - startart
